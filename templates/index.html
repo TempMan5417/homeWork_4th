@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- --------------------------- -->
+    <!-- 임포트 -->
+    <!-- --------------------------- -->
+​
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+​
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+​
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+​
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+​
+    <!-- --------------------------- -->
+    <!-- 코드 -->
+    <!-- --------------------------- -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중고장터_우주 | 외계인A </title>
+    <style type="text/css">
+        * {
+        font-family: 'Stylish', sans-serif;
+        }
+​
+        .ProductImage {
+            color: white;
+            width: 600px;
+            height: 300px;
+            background-image: url('https://visla.kr/wp/wp-content/uploads/2019/03/20190305_01-2.jpg');
+            background-position: center;
+            background-size: cover;
+            border-radius: 10px;
+            text-align: center;
+            padding-top: 40px;
+        }
+        .wrap {
+            margin: 10px auto;
+            width : 600px ;
+        }
+        .title{
+            font-weight: bold;
+        }
+    </style>
+    <!-- --------------------------- -->
+    <!-- JAVA -->
+    <!-- --------------------------- -->
+    <script>
+        // 버튼 명령어 입니다.
+        function btn_command() {
+            let cur_userName = $('#textbox_userName').val();
+            let cur_num = $('#option_num').val();
+            let cur_address = $('#textbox_address').val();
+            let cur_phoneNumber = $('#textbox_phoneNumber').val();
+
+            
+            // Check
+            worngDataList = []
+            if (cur_userName == '') {
+                worngDataList.push('이름')
+                }
+            if (cur_num == '갯수') {
+                worngDataList.push('갯수')
+                
+                }
+            if (cur_address == '') {
+                worngDataList.push('주소')
+                }
+            if (cur_phoneNumber == '') {
+                worngDataList.push('전화번호')
+                }
+            if (worngDataList.length > 0) {
+                let printText = '아래의 내용이 작성되지 않았습니다. 체크 해주십시오. ' ;
+                printText =  printText + '\n'+  worngDataList.join(', ') ;
+                alert(printText) ;
+                return 
+                }
+            $.ajax({
+                type: "POST",
+                url: "/order",
+                data: { 'userName' : cur_userName, 
+                        'num' : cur_num, 
+                        'address' : cur_address,
+                        'phoneNumber' : cur_phoneNumber },
+
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            })
+
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+        $('#orders-box').html('');
+        listing();
+        });
+
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders'];
+                        for (let i = 0; i < orders.length; i++) {
+                            build_orderList( orders[i]['userName'], 
+                                             orders[i]['num'],
+                                             orders[i]['address'],
+                                             orders[i]['phoneNumber']);
+                          }
+                      }
+                }
+            })
+        }
+
+        function build_orderList(userName, num, address, phoneNumber)
+
+          {
+              let temp_html = `<tr>
+                                  <td>${userName}</td>
+                                  <td>${num}</td>
+                                  <td>${address}</td>
+                                  <td>${phoneNumber}</td>
+                              </tr>`;
+
+              $('#orders-box').append(temp_html);
+          }
+
+    </script>
+    <!-- --------------------------- -->
+    <!-- HTML -->
+    <!-- --------------------------- -->
+</head>
+<body>
+    <div class="wrap">
+        <div>
+            <h1 class="title">하얀 보름달 팝니다! </h1>
+            <hr style="border: solid 1px black;">
+            <h3> 가격 : 29.800원 <h3\>
+            <p class="lead">이번에 노란 초승달 구매해서. 필요없어서 팔아요. 사실 분. (쿨거래 환영.) </p>
+            <p id='moneyInfo'> 달러-원 환율 : 1000.00 <p\>
+        </div>
+
+        <div class="ProductImage">
+        </div>
+​
+​
+        <div>
+            <br />
+​
+            <p>
+            주문사 성함 : <input id="textbox_userName" type="text" />
+            </p>
+            <p>
+            수량 : 
+            <select id="option_num">
+                <option hidden> 갯수 </option>
+                <option> 1 </option>
+                <option> 2 </option>
+                <option> 3 </option>
+            </select>
+            </p>
+            <p>
+                주소 : <input id="textbox_address" type="text" />
+            </p>
+​
+​
+            <p>
+                전화번호 : <input id="textbox_phoneNumber" type="text" />
+            </p>
+​
+            <br />
+​
+​
+        </div>
+        <a class="btn btn-primary btn-lg" href="#" role="button", onclick = "btn_command()">주문하기</a>
+        </div>
+
+        <div class="orders">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="meta_info" scope="col">성함</th>
+                        <th class="meta_info" scope="col">수량</th>
+                        <th class="meta_info" scope="col">주소</th>
+                        <th class="meta_info" scope="col">전화번호</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-box">
+                    <tr>
+                        <td>Null</td>
+                        <td>Null</td>
+                        <td>Null</td>
+                        <td>Null</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+​
+</body>
+</body>
+</html>
